@@ -51,14 +51,12 @@
                     <input type="date" id="entryDate">
                 </div>
                 <div class="form-group">
-                    <label for="exitDate" id="exitDateLabelEl" data-i18n="exitDateLabel">Ausreisedatum</label>
+                    <label for="exitDate" data-i18n="exitDateOptional">Ausreisedatum (optional bei aktuellem
+                        Aufenthalt)</label>
                     <input type="date" id="exitDate">
-                </div>
-                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="ongoingStay" style="width: 20px; height: 20px; cursor: pointer;"
-                        onchange="toggleOngoingStay()">
-                    <label for="ongoingStay" style="margin: 0; cursor: pointer; color: #fff;"
-                        data-i18n="ongoingStayLabel">Ich bin derzeit im Schengen-Raum</label>
+                    <small style="color: #aaa; margin-top: 5px; display: block;" data-i18n="exitDateHint">💡 Lassen Sie
+                        das Feld leer, wenn Sie
+                        sich noch im Schengen-Raum befinden</small>
                 </div>
                 <button class="btn-success" onclick="addStay()" data-i18n="btnAddStay">Aufenthalt hinzufügen</button>
             </div>
@@ -458,26 +456,6 @@
             calculate();
         }
 
-        // Toggle ongoing stay checkbox
-        function toggleOngoingStay() {
-            const isOngoing = document.getElementById('ongoingStay').checked;
-            const exitDateInput = document.getElementById('exitDate');
-            const exitDateLabel = document.getElementById('exitDateLabelEl');
-
-            if (isOngoing) {
-                exitDateInput.value = '';
-                exitDateInput.disabled = true;
-                exitDateInput.style.opacity = '0.5';
-                exitDateLabel.setAttribute('data-i18n', 'exitDateOptional');
-                exitDateLabel.textContent = t('exitDateOptional');
-            } else {
-                exitDateInput.disabled = false;
-                exitDateInput.style.opacity = '1';
-                exitDateLabel.setAttribute('data-i18n', 'exitDateLabel');
-                exitDateLabel.textContent = t('exitDateLabel');
-            }
-        }
-
         // Check if there's an ongoing stay
         function hasOngoingStay() {
             return stays.some(stay => !stay.exit);
@@ -491,34 +469,20 @@
         function addStay() {
             const entryDate = document.getElementById('entryDate').value;
             const exitDate = document.getElementById('exitDate').value;
-            const isOngoing = document.getElementById('ongoingStay').checked;
 
-            // Validate entry date
+            // Entry date is always required
             if (!entryDate) {
                 showNotification(t('msgErrorBothDates'), 'error');
                 return;
             }
 
-            // If not ongoing, exit date is required
-            if (!isOngoing && !exitDate) {
-                showNotification(t('msgErrorBothDates'), 'error');
-                return;
-            }
-
             const entry = parseDate(entryDate);
+            const isOngoing = !exitDate;  // Automatically detect: no exit date = ongoing stay
 
-            // If ongoing stay, check that there are no other ongoing stays
+            // If ongoing stay
             if (isOngoing) {
                 // Check if there's already an ongoing stay
                 if (hasOngoingStay()) {
-                    // Remove the existing ongoing stay first or show error
-                    showNotification(t('msgErrorPreviousNoExit'), 'error');
-                    return;
-                }
-
-                // Check that all existing stays have exit dates
-                const staysWithoutExit = stays.filter(s => !s.exit);
-                if (staysWithoutExit.length > 0) {
                     showNotification(t('msgErrorPreviousNoExit'), 'error');
                     return;
                 }
@@ -542,11 +506,10 @@
                 calculate();
 
                 document.getElementById('entryDate').value = '';
-                document.getElementById('ongoingStay').checked = false;
-                toggleOngoingStay();
 
                 showNotification(tf('msgOngoingStayAdded', formatDateDisplay(entry)), 'success');
             } else {
+                // Completed stay with exit date
                 const exit = parseDate(exitDate);
 
                 if (exit < entry) {
@@ -554,10 +517,31 @@
                     return;
                 }
 
-                // Check that if we have ongoing stay, new completed stay should be before it
+                // Smart update: if we have ongoing stay with same entry date, update it
                 const ongoingStay = getOngoingStay();
                 if (ongoingStay) {
                     const ongoingEntry = parseDate(ongoingStay.entry);
+
+                    // Same entry date? Update the ongoing stay with exit date
+                    if (formatDate(entry) === formatDate(ongoingEntry)) {
+                        const days = daysDifference(entry, exit) + 1;
+                        ongoingStay.exit = exitDate;
+                        ongoingStay.days = days;
+                        delete ongoingStay.ongoing;
+
+                        saveToLocalStorage();
+                        renderStaysList();
+                        renderFullCalendar();
+                        calculate();
+
+                        document.getElementById('entryDate').value = '';
+                        document.getElementById('exitDate').value = '';
+
+                        showNotification(tf('msgStayAdded', days) + ' ✓ ' + t('ongoingStay') + ' ' + t('msgStayDeleted').toLowerCase(), 'success');
+                        return;
+                    }
+
+                    // Different entry date - ongoing must be after completed stay
                     if (exit >= ongoingEntry) {
                         showNotification(t('msgErrorPreviousNoExit'), 'error');
                         return;

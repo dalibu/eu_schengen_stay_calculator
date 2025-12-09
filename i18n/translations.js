@@ -146,6 +146,7 @@ const de = {
     // Ongoing stay
     ongoingStayLabel: "Ich bin derzeit im Schengen-Raum",
     exitDateOptional: "Ausreisedatum (optional bei aktuellem Aufenthalt)",
+    exitDateHint: "💡 Lassen Sie das Feld leer, wenn Sie sich noch im Schengen-Raum befinden",
     ongoingStay: "Aktueller Aufenthalt",
     ongoingStayBadge: "🔴 Aktuell im Schengen-Raum",
     msgErrorPreviousNoExit: "Vorherige Aufenthalte müssen ein Ausreisedatum haben!",
@@ -294,6 +295,7 @@ const en = {
     // Ongoing stay
     ongoingStayLabel: "I am currently in the Schengen area",
     exitDateOptional: "Exit date (optional for current stay)",
+    exitDateHint: "💡 Leave empty if you are currently in the Schengen area",
     ongoingStay: "Current stay",
     ongoingStayBadge: "🔴 Currently in Schengen area",
     msgErrorPreviousNoExit: "Previous stays must have an exit date!",
@@ -442,6 +444,7 @@ const uk = {
     // Поточне перебування
     ongoingStayLabel: "Я зараз у Шенгенській зоні",
     exitDateOptional: "Дата виїзду (необов'язково для поточного перебування)",
+    exitDateHint: "💡 Залиште порожнім, якщо ви зараз у Шенгенській зоні",
     ongoingStay: "Поточне перебування",
     ongoingStayBadge: "🔴 Зараз у Шенгенській зоні",
     msgErrorPreviousNoExit: "Попередні перебування повинні мати дату виїзду!",
@@ -590,6 +593,7 @@ const ru = {
     // Текущее пребывание
     ongoingStayLabel: "Я сейчас в Шенгенской зоне",
     exitDateOptional: "Дата выезда (необязательно для текущего пребывания)",
+    exitDateHint: "💡 Оставьте пустым, если вы сейчас в Шенгенской зоне",
     ongoingStay: "Текущее пребывание",
     ongoingStayBadge: "🔴 Сейчас в Шенгенской зоне",
     msgErrorPreviousNoExit: "Предыдущие пребывания должны иметь дату выезда!",
