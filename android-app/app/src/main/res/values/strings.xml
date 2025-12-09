@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Schengen Calculator</string>
+    
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
+    <string name="today">Today</string>
+    <string name="days">days</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Overview</string>
+    <string name="nav_stays">Stays</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_plan">Plan</string>
+    <string name="nav_settings">Settings</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Schengen Stay Calculator</string>
+    <string name="info_title">ℹ️ Schengen Rule (90/180-Day Rule)</string>
+    <string name="info_text">Third-country nationals may stay for a maximum of 90 days within a rolling 180-day period in the Schengen area.</string>
+    
+    <!-- Reference Date -->
+    <string name="reference_date">Reference Date</string>
+    <string name="reference_date_hint">Calculation date (default: today)</string>
+    <string name="set_today">Today</string>
+    <string name="calculate">Calculate</string>
+    
+    <!-- Results -->
+    <string name="results_title">📊 Results</string>
+    <string name="days_used">Days Used</string>
+    <string name="days_used_detail">%d of 90 days used</string>
+    <string name="days_remaining">Days Remaining</string>
+    <string name="days_remaining_detail">%d days remaining</string>
+    <string name="window_period">180-Day Window</string>
+    <string name="window_dates">%s to %s</string>
+    <string name="next_entry_date">Next Entry Date</string>
+    <string name="immediate_entry">Immediately (from today)</string>
+    <string name="next_entry_on">From %s</string>
+    <string name="not_calculable">Not calculable</string>
+    
+    <!-- Overstay Warning -->
+    <string name="overstay_title">⚠️ WARNING: Overstay!</string>
+    <string name="overstay_message">You have exceeded the 90-day limit!</string>
+    <string name="overstay_days">%d days over limit</string>
+    <string name="can_stay_more">You can stay %d more day(s)</string>
+    <string name="must_leave_today">You must leave today!</string>
+    <string name="should_have_left">You should have left %d day(s) ago!</string>
+    
+    <!-- Add Stay -->
+    <string name="add_stay_title">✈️ Add Stay</string>
+    <string name="entry_date">Entry Date</string>
+    <string name="exit_date">Exit Date</string>
+    <string name="exit_date_optional">Exit Date (optional)</string>
+    <string name="ongoing_stay_hint">💡 Leave empty if you are currently in the Schengen area</string>
+    <string name="notes">Notes</string>
+    <string name="notes_hint">Optional: Purpose of trip, countries visited, etc.</string>
+    <string name="add_stay">Add Stay</string>
+    
+    <!-- Stays List -->
+    <string name="stays_list_title">📋 Stays</string>
+    <string name="no_stays">No stays recorded</string>
+    <string name="ongoing_stay">Current Stay</string>
+    <string name="ongoing_badge">🔴 Currently in Schengen area</string>
+    <string name="total_stays">Stays: %d</string>
+    <string name="total_days">Total days: %d</string>
+    <string name="delete_all">Delete All</string>
+    <string name="delete_all_confirm">Really delete all stays?</string>
+    <string name="load_example">Load Example Data</string>
+    
+    <!-- Planning -->
+    <string name="planning_title">🎯 Plan Stay</string>
+    <string name="planning_description">Calculate when you can enter for a specific number of days.</string>
+    <string name="desired_days">Desired Stay Duration (days)</string>
+    <string name="plan_from_date">Plan From Date</string>
+    <string name="plan_stay">Calculate Entry Date</string>
+    <string name="plan_possible">✅ Stay Possible!</string>
+    <string name="plan_not_possible">⚠️ Not Possible</string>
+    <string name="plan_entry_date">Entry Date: %s</string>
+    <string name="plan_exit_date">Exit Date: %s</string>
+    <string name="plan_duration">Stay Duration: %d days</string>
+    <string name="plan_wait_days">You must wait %d day(s).</string>
+    <string name="plan_not_possible_text">A stay of %d days is not possible in the next 365 days.</string>
+    
+    <!-- Calendar -->
+    <string name="calendar_title">📆 Year Calendar</string>
+    <string name="current_year">Current Year</string>
+    <string name="stays_in_period">Stays in Period</string>
+    <string name="days_in_period">Days in Period</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="language">Language</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="notifications">Notifications</string>
+    <string name="enable_notifications">Enable Notifications</string>
+    <string name="notification_days_before">Days Before Expiry to Notify</string>
+    <string name="data_management">Data Management</string>
+    <string name="export_data">Export Data</string>
+    <string name="import_data">Import Data</string>
+    <string name="about">About</string>
+    <string name="version">Version %s</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">Schengen Reminders</string>
+    <string name="notification_channel_description">Notifications about remaining days</string>
+    <string name="notification_title_warning">⚠️ Schengen Limit Almost Reached</string>
+    <string name="notification_message_warning">Only %d days remaining in Schengen area</string>
+    <string name="notification_title_overstay">🚨 Schengen Overstay!</string>
+    <string name="notification_message_overstay">You have exceeded the 90-day limit</string>
+    
+    <!-- Messages -->
+    <string name="msg_stay_added">Stay added: %d days</string>
+    <string name="msg_stay_deleted">Stay deleted</string>
+    <string name="msg_all_deleted">All stays deleted</string>
+    <string name="msg_exported">Data exported</string>
+    <string name="msg_imported">Data imported</string>
+    <string name="msg_example_loaded">Example data loaded</string>
+    
+    <!-- Errors -->
+    <string name="error_entry_required">Please enter entry date</string>
+    <string name="error_exit_after_entry">Exit date must be after entry date</string>
+    <string name="error_future_entry">Entry date cannot be in the future</string>
+    <string name="error_ongoing_exists">There is already an ongoing stay</string>
+    <string name="error_invalid_days">Please enter a valid number (1-90)</string>
+    <string name="error_import">Error importing data</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_delete_stay">Delete stay</string>
+    <string name="cd_edit_stay">Edit stay</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_menu">Menu</string>
+</resources>

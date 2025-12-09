@@ -1,0 +1,84 @@
+CREATE TABLE Stay (
+    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    entryDate TEXT NOT NULL,
+    exitDate TEXT,
+    isOngoing INTEGER AS Boolean NOT NULL DEFAULT 0,
+    notes TEXT,
+    createdAt INTEGER NOT NULL,
+    updatedAt INTEGER NOT NULL
+);
+
+-- Indexes for faster queries
+CREATE INDEX stay_entry_date ON Stay(entryDate);
+CREATE INDEX stay_exit_date ON Stay(exitDate);
+CREATE INDEX stay_ongoing ON Stay(isOngoing);
+
+-- Get all stays ordered by entry date
+getAllStays:
+SELECT *
+FROM Stay
+ORDER BY entryDate DESC;
+
+-- Get stays within a date range
+getStaysInRange:
+SELECT *
+FROM Stay
+WHERE entryDate <= :endDate
+AND (exitDate >= :startDate OR exitDate IS NULL)
+ORDER BY entryDate ASC;
+
+-- Get ongoing stay (if exists)
+getOngoingStay:
+SELECT *
+FROM Stay
+WHERE isOngoing = 1
+LIMIT 1;
+
+-- Check if ongoing stay exists
+hasOngoingStay:
+SELECT COUNT(*) > 0
+FROM Stay
+WHERE isOngoing = 1;
+
+-- Insert a new stay
+insertStay:
+INSERT INTO Stay(entryDate, exitDate, isOngoing, notes, createdAt, updatedAt)
+VALUES (?, ?, ?, ?, ?, ?);
+
+-- Update a stay
+updateStay:
+UPDATE Stay
+SET entryDate = :entryDate,
+    exitDate = :exitDate,
+    isOngoing = :isOngoing,
+    notes = :notes,
+    updatedAt = :updatedAt
+WHERE id = :id;
+
+-- Update ongoing stay with exit date
+completeOngoingStay:
+UPDATE Stay
+SET exitDate = :exitDate,
+    isOngoing = 0,
+    updatedAt = :updatedAt
+WHERE isOngoing = 1;
+
+-- Delete a stay
+deleteStay:
+DELETE FROM Stay
+WHERE id = :id;
+
+-- Delete all stays
+deleteAllStays:
+DELETE FROM Stay;
+
+-- Get stay by ID
+getStayById:
+SELECT *
+FROM Stay
+WHERE id = :id;
+
+-- Count total stays
+countStays:
+SELECT COUNT(*)
+FROM Stay;

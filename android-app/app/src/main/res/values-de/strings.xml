@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App Name -->
+    <string name="app_name">Schengen Rechner</string>
+    
+    <!-- General -->
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="delete">Löschen</string>
+    <string name="save">Speichern</string>
+    <string name="close">Schließen</string>
+    <string name="today">Heute</string>
+    <string name="days">Tage</string>
+    
+    <!-- Navigation -->
+    <string name="nav_home">Übersicht</string>
+    <string name="nav_stays">Aufenthalte</string>
+    <string name="nav_calendar">Kalender</string>
+    <string name="nav_plan">Planen</string>
+    <string name="nav_settings">Einstellungen</string>
+    
+    <!-- Home Screen -->
+    <string name="home_title">Schengen-Aufenthaltsrechner</string>
+    <string name="info_title">ℹ️ Schengen-Regel (90/180-Tage-Regel)</string>
+    <string name="info_text">Drittstaatsangehörige dürfen sich maximal 90 Tage innerhalb eines rollierenden 180-Tage-Zeitraums im Schengen-Raum aufhalten.</string>
+    
+    <!-- Reference Date -->
+    <string name="reference_date">Bezugsdatum</string>
+    <string name="reference_date_hint">Berechnungsdatum (Standard: heute)</string>
+    <string name="set_today">Heute</string>
+    <string name="calculate">Berechnen</string>
+    
+    <!-- Results -->
+    <string name="results_title">📊 Ergebnisse</string>
+    <string name="days_used">Verbrauchte Tage</string>
+    <string name="days_used_detail">%d von 90 Tagen verbraucht</string>
+    <string name="days_remaining">Verbleibende Tage</string>
+    <string name="days_remaining_detail">%d Tage verbleibend</string>
+    <string name="window_period">180-Tage-Fenster</string>
+    <string name="window_dates">%s bis %s</string>
+    <string name="next_entry_date">Nächstes Einreisedatum</string>
+    <string name="immediate_entry">Sofort (ab heute)</string>
+    <string name="next_entry_on">Ab %s</string>
+    <string name="not_calculable">Nicht berechenbar</string>
+    
+    <!-- Overstay Warning -->
+    <string name="overstay_title">⚠️ ACHTUNG: Überschreitung!</string>
+    <string name="overstay_message">Sie haben das 90-Tage-Limit überschritten!</string>
+    <string name="overstay_days">%d Tage überschritten</string>
+    <string name="can_stay_more">Sie können noch %d Tag(e) bleiben</string>
+    <string name="must_leave_today">Sie müssen heute ausreisen!</string>
+    <string name="should_have_left">Sie hätten vor %d Tag(en) ausreisen müssen!</string>
+    
+    <!-- Add Stay -->
+    <string name="add_stay_title">✈️ Aufenthalt hinzufügen</string>
+    <string name="entry_date">Einreisedatum</string>
+    <string name="exit_date">Ausreisedatum</string>
+    <string name="exit_date_optional">Ausreisedatum (optional)</string>
+    <string name="ongoing_stay_hint">💡 Lassen Sie das Feld leer, wenn Sie sich noch im Schengen-Raum befinden</string>
+    <string name="notes">Notizen</string>
+    <string name="notes_hint">Optional: Zweck der Reise, besuchte Länder, etc.</string>
+    <string name="add_stay">Aufenthalt hinzufügen</string>
+    
+    <!-- Stays List -->
+    <string name="stays_list_title">📋 Aufenthalte</string>
+    <string name="no_stays">Keine Aufenthalte eingetragen</string>
+    <string name="ongoing_stay">Aktueller Aufenthalt</string>
+    <string name="ongoing_badge">🔴 Aktuell im Schengen-Raum</string>
+    <string name="total_stays">Aufenthalte: %d</string>
+    <string name="total_days">Tage gesamt: %d</string>
+    <string name="delete_all">Alle löschen</string>
+    <string name="delete_all_confirm">Alle Aufenthalte wirklich löschen?</string>
+    <string name="load_example">Beispieldaten laden</string>
+    
+    <!-- Planning -->
+    <string name="planning_title">🎯 Aufenthalt planen</string>
+    <string name="planning_description">Berechnen Sie, ab wann Sie für eine bestimmte Anzahl von Tagen einreisen können.</string>
+    <string name="desired_days">Gewünschte Aufenthaltsdauer (Tage)</string>
+    <string name="plan_from_date">Planen ab Datum</string>
+    <string name="plan_stay">Einreisedatum berechnen</string>
+    <string name="plan_possible">✅ Aufenthalt möglich!</string>
+    <string name="plan_not_possible">⚠️ Nicht möglich</string>
+    <string name="plan_entry_date">Einreisedatum: %s</string>
+    <string name="plan_exit_date">Ausreisedatum: %s</string>
+    <string name="plan_duration">Aufenthaltsdauer: %d Tage</string>
+    <string name="plan_wait_days">Sie müssen %d Tag(e) warten.</string>
+    <string name="plan_not_possible_text">Ein Aufenthalt von %d Tagen ist in den nächsten 365 Tagen nicht möglich.</string>
+    
+    <!-- Calendar -->
+    <string name="calendar_title">📆 Jahreskalender</string>
+    <string name="current_year">Aktuelles Jahr</string>
+    <string name="stays_in_period">Aufenthalte im Zeitraum</string>
+    <string name="days_in_period">Tage im Zeitraum</string>
+    
+    <!-- Settings -->
+    <string name="settings_title">Einstellungen</string>
+    <string name="language">Sprache</string>
+    <string name="theme">Design</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+    <string name="theme_system">System</string>
+    <string name="notifications">Benachrichtigungen</string>
+    <string name="enable_notifications">Benachrichtigungen aktivieren</string>
+    <string name="notification_days_before">Tage vor Ablauf benachrichtigen</string>
+    <string name="data_management">Datenverwaltung</string>
+    <string name="export_data">Daten exportieren</string>
+    <string name="import_data">Daten importieren</string>
+    <string name="about">Über</string>
+    <string name="version">Version %s</string>
+    
+    <!-- Notifications -->
+    <string name="notification_channel_name">Schengen Erinnerungen</string>
+    <string name="notification_channel_description">Benachrichtigungen über verbleibende Tage</string>
+    <string name="notification_title_warning">⚠️ Schengen-Limit fast erreicht</string>
+    <string name="notification_message_warning">Nur noch %d Tage im Schengen-Raum verbleibend</string>
+    <string name="notification_title_overstay">🚨 Schengen-Überschreitung!</string>
+    <string name="notification_message_overstay">Sie haben das 90-Tage-Limit überschritten</string>
+    
+    <!-- Messages -->
+    <string name="msg_stay_added">Aufenthalt hinzugefügt: %d Tage</string>
+    <string name="msg_stay_deleted">Aufenthalt gelöscht</string>
+    <string name="msg_all_deleted">Alle Aufenthalte gelöscht</string>
+    <string name="msg_exported">Daten exportiert</string>
+    <string name="msg_imported">Daten importiert</string>
+    <string name="msg_example_loaded">Beispieldaten geladen</string>
+    
+    <!-- Errors -->
+    <string name="error_entry_required">Bitte Einreisedatum eingeben</string>
+    <string name="error_exit_after_entry">Ausreisedatum muss nach Einreisedatum liegen</string>
+    <string name="error_future_entry">Einreisedatum darf nicht in der Zukunft liegen</string>
+    <string name="error_ongoing_exists">Es gibt bereits einen aktuellen Aufenthalt</string>
+    <string name="error_invalid_days">Bitte eine gültige Anzahl (1-90) eingeben</string>
+    <string name="error_import">Fehler beim Importieren</string>
+    
+    <!-- Content Descriptions -->
+    <string name="cd_delete_stay">Aufenthalt löschen</string>
+    <string name="cd_edit_stay">Aufenthalt bearbeiten</string>
+    <string name="cd_back">Zurück</string>
+    <string name="cd_menu">Menü</string>
+</resources>

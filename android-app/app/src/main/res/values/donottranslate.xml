@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="version_code" translatable="false">1</string>
+    <string name="version_name" translatable="false">1.0.0</string>
+</resources>
