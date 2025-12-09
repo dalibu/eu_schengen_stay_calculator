@@ -40,27 +40,35 @@ That's it! No build steps or dependencies required.
 eu_schengen_stay_calculator/
 ├── schengen_stay_calculator.html  # Main application
 ├── styles.css                      # Stylesheet
-└── i18n/                           # Internationalization
-    ├── de.js                       # German translations
-    ├── en.js                       # English translations
-    ├── uk.js                       # Ukrainian translations
-    ├── ru.js                       # Russian translations
-    ├── translations.js             # Combined bundle for browser
-    └── index.js                    # ES6 module (for bundlers)
+├── favicon.png                     # Site icon
+└── i18n/
+    └── translations.js             # All translations (DE/EN/UK/RU)
 ```
 
 ## 🌍 Adding a New Language
 
-1. Copy `i18n/en.js` to `i18n/xx.js` (where `xx` is the language code)
-2. Translate all strings in the new file
-3. Add the import to `i18n/translations.js`:
+1. Open `i18n/translations.js`
+2. Copy one of the existing language objects (e.g., `const en = { ... }`)
+3. Create a new language object with your translations:
    ```javascript
-   const xx = { ... };  // Your translations
-   const translations = { de, en, uk, ru, xx };
+   const fr = {
+       title: "🇪🇺 Calculateur de séjour Schengen",
+       // ... translate all keys
+   };
    ```
-4. Add a language button in `schengen_stay_calculator.html`:
+4. Add it to the `translations` object at the bottom:
+   ```javascript
+   const translations = {
+       de,
+       en,
+       uk,
+       ru,
+       fr  // ← Add your language here
+   };
+   ```
+5. Add a language button in `schengen_stay_calculator.html`:
    ```html
-   <button class="lang-btn" onclick="setLanguage('xx')" data-lang="xx">XX</button>
+   <button class="lang-btn" onclick="setLanguage('fr')" data-lang="fr">FR</button>
    ```
 
 ## 📜 The 90/180 Rule Explained
