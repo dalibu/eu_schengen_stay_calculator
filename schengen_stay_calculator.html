@@ -51,8 +51,14 @@
                     <input type="date" id="entryDate">
                 </div>
                 <div class="form-group">
-                    <label for="exitDate" data-i18n="exitDateLabel">Ausreisedatum</label>
+                    <label for="exitDate" id="exitDateLabelEl" data-i18n="exitDateLabel">Ausreisedatum</label>
                     <input type="date" id="exitDate">
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="ongoingStay" style="width: 20px; height: 20px; cursor: pointer;"
+                        onchange="toggleOngoingStay()">
+                    <label for="ongoingStay" style="margin: 0; cursor: pointer; color: #fff;"
+                        data-i18n="ongoingStayLabel">Ich bin derzeit im Schengen-Raum</label>
                 </div>
                 <button class="btn-success" onclick="addStay()" data-i18n="btnAddStay">Aufenthalt hinzufügen</button>
             </div>
@@ -102,6 +108,14 @@
                         <span class="result-label" data-i18n="nextEntryLabel">Nächstes Einreisedatum:</span>
                         <span class="result-value" id="nextEntryDate">-</span>
                     </div>
+                </div>
+                <!-- Overstay Warning -->
+                <div id="overstayWarning"
+                    style="display: none; margin-top: 20px; padding: 20px; background: rgba(230, 57, 70, 0.2); border: 2px solid #e63946; border-radius: 15px;">
+                    <h4 style="color: #e63946; margin-bottom: 10px;" data-i18n="overstayWarningTitle">⚠️ ACHTUNG:
+                        Überschreitung!</h4>
+                    <p id="overstayWarningText" style="color: #fff; margin-bottom: 10px;"></p>
+                    <p id="overstayAdvice" style="color: #ffc107; font-weight: 600;"></p>
                 </div>
             </div>
         </div>
@@ -444,42 +458,132 @@
             calculate();
         }
 
+        // Toggle ongoing stay checkbox
+        function toggleOngoingStay() {
+            const isOngoing = document.getElementById('ongoingStay').checked;
+            const exitDateInput = document.getElementById('exitDate');
+            const exitDateLabel = document.getElementById('exitDateLabelEl');
+
+            if (isOngoing) {
+                exitDateInput.value = '';
+                exitDateInput.disabled = true;
+                exitDateInput.style.opacity = '0.5';
+                exitDateLabel.setAttribute('data-i18n', 'exitDateOptional');
+                exitDateLabel.textContent = t('exitDateOptional');
+            } else {
+                exitDateInput.disabled = false;
+                exitDateInput.style.opacity = '1';
+                exitDateLabel.setAttribute('data-i18n', 'exitDateLabel');
+                exitDateLabel.textContent = t('exitDateLabel');
+            }
+        }
+
+        // Check if there's an ongoing stay
+        function hasOngoingStay() {
+            return stays.some(stay => !stay.exit);
+        }
+
+        // Get ongoing stay if exists
+        function getOngoingStay() {
+            return stays.find(stay => !stay.exit);
+        }
+
         function addStay() {
             const entryDate = document.getElementById('entryDate').value;
             const exitDate = document.getElementById('exitDate').value;
+            const isOngoing = document.getElementById('ongoingStay').checked;
 
-            if (!entryDate || !exitDate) {
+            // Validate entry date
+            if (!entryDate) {
+                showNotification(t('msgErrorBothDates'), 'error');
+                return;
+            }
+
+            // If not ongoing, exit date is required
+            if (!isOngoing && !exitDate) {
                 showNotification(t('msgErrorBothDates'), 'error');
                 return;
             }
 
             const entry = parseDate(entryDate);
-            const exit = parseDate(exitDate);
 
-            if (exit < entry) {
-                showNotification(t('msgErrorExitAfterEntry'), 'error');
-                return;
+            // If ongoing stay, check that there are no other ongoing stays
+            if (isOngoing) {
+                // Check if there's already an ongoing stay
+                if (hasOngoingStay()) {
+                    // Remove the existing ongoing stay first or show error
+                    showNotification(t('msgErrorPreviousNoExit'), 'error');
+                    return;
+                }
+
+                // Check that all existing stays have exit dates
+                const staysWithoutExit = stays.filter(s => !s.exit);
+                if (staysWithoutExit.length > 0) {
+                    showNotification(t('msgErrorPreviousNoExit'), 'error');
+                    return;
+                }
+
+                // For ongoing stay, use today as temporary end for calculation
+                const today = new Date();
+                const days = daysDifference(entry, today) + 1;
+
+                stays.push({
+                    entry: entryDate,
+                    exit: null, // null indicates ongoing stay
+                    days: days,
+                    ongoing: true
+                });
+
+                stays.sort((a, b) => parseDate(a.entry) - parseDate(b.entry));
+
+                saveToLocalStorage();
+                renderStaysList();
+                renderFullCalendar();
+                calculate();
+
+                document.getElementById('entryDate').value = '';
+                document.getElementById('ongoingStay').checked = false;
+                toggleOngoingStay();
+
+                showNotification(tf('msgOngoingStayAdded', formatDateDisplay(entry)), 'success');
+            } else {
+                const exit = parseDate(exitDate);
+
+                if (exit < entry) {
+                    showNotification(t('msgErrorExitAfterEntry'), 'error');
+                    return;
+                }
+
+                // Check that if we have ongoing stay, new completed stay should be before it
+                const ongoingStay = getOngoingStay();
+                if (ongoingStay) {
+                    const ongoingEntry = parseDate(ongoingStay.entry);
+                    if (exit >= ongoingEntry) {
+                        showNotification(t('msgErrorPreviousNoExit'), 'error');
+                        return;
+                    }
+                }
+
+                const days = daysDifference(entry, exit) + 1;
+
+                stays.push({
+                    entry: entryDate,
+                    exit: exitDate,
+                    days: days
+                });
+
+                stays.sort((a, b) => parseDate(a.entry) - parseDate(b.entry));
+
+                saveToLocalStorage();
+                renderStaysList();
+                renderFullCalendar();
+                calculate();
+
+                document.getElementById('entryDate').value = '';
+                document.getElementById('exitDate').value = '';
+
+                showNotification(tf('msgStayAdded', days), 'success');
             }
-
-            const days = daysDifference(entry, exit) + 1;
-
-            stays.push({
-                entry: entryDate,
-                exit: exitDate,
-                days: days
-            });
-
-            stays.sort((a, b) => parseDate(a.entry) - parseDate(b.entry));
-
-            saveToLocalStorage();
-            renderStaysList();
-            renderFullCalendar();
-            calculate();
-
-            document.getElementById('entryDate').value = '';
-            document.getElementById('exitDate').value = '';
-
-            showNotification(tf('msgStayAdded', days), 'success');
         }
 
         function deleteStay(index) {
@@ -514,16 +618,32 @@
 
             let html = '';
             let totalDays = 0;
+            const today = new Date();
 
             stays.forEach((stay, index) => {
-                totalDays += stay.days;
                 const entryDisplay = formatDateDisplay(parseDate(stay.entry));
-                const exitDisplay = formatDateDisplay(parseDate(stay.exit));
+                let exitDisplay;
+                let currentDays;
+                let isOngoing = !stay.exit;
+
+                if (isOngoing) {
+                    // Calculate days from entry to today
+                    currentDays = daysDifference(parseDate(stay.entry), today) + 1;
+                    exitDisplay = `<span style="color: #ffc107;">${t('ongoingStay')}</span>`;
+                } else {
+                    currentDays = stay.days;
+                    exitDisplay = formatDateDisplay(parseDate(stay.exit));
+                }
+
+                totalDays += currentDays;
 
                 html += `
-                    <div class="stay-item">
-                        <div class="dates">${entryDisplay} - ${exitDisplay}</div>
-                        <div class="days">${stay.days} ${t('days')}</div>
+                    <div class="stay-item" style="${isOngoing ? 'border-left-color: #ffc107; background: rgba(255, 193, 7, 0.1);' : ''}">
+                        <div class="dates">
+                            ${entryDisplay} - ${exitDisplay}
+                            ${isOngoing ? '<br><small style="color: #ffc107;">' + t('ongoingStayBadge') + '</small>' : ''}
+                        </div>
+                        <div class="days" style="${isOngoing ? 'color: #ffc107;' : ''}">${currentDays} ${t('days')}</div>
                         <button class="delete-btn" onclick="deleteStay(${index})">✕</button>
                     </div>
                 `;
@@ -695,6 +815,7 @@
             if (!referenceDateStr) return;
 
             const referenceDate = parseDate(referenceDateStr);
+            const ongoingStay = getOngoingStay();
 
             // 180-Tage-Fenster
             const windowStart180 = new Date(referenceDate);
@@ -712,7 +833,8 @@
 
             stays.forEach(stay => {
                 const entryDate = parseDate(stay.entry);
-                const exitDate = parseDate(stay.exit);
+                // For ongoing stay, use reference date as end
+                const exitDate = stay.exit ? parseDate(stay.exit) : referenceDate;
 
                 const segmentStart = new Date(Math.max(entryDate.getTime(), windowStart365.getTime()));
                 const segmentEnd = new Date(Math.min(exitDate.getTime(), referenceDate.getTime()));
@@ -723,7 +845,8 @@
                         end: segmentEnd,
                         originalEntry: entryDate,
                         originalExit: exitDate,
-                        inWindow180: segmentStart >= windowStart180
+                        inWindow180: segmentStart >= windowStart180,
+                        ongoing: !stay.exit
                     });
                 }
 
@@ -742,6 +865,8 @@
             });
 
             const remainingDays = Math.max(0, 90 - usedDays180);
+            const isOverstay = usedDays180 > 90;
+            const overstayDays = Math.max(0, usedDays180 - 90);
 
             chartData = {
                 referenceDate: referenceDate,
@@ -757,11 +882,11 @@
             // UI aktualisieren
             document.getElementById('usedDays').textContent = usedDays180;
             document.getElementById('usedDays').className = 'result-value ' +
-                (usedDays180 > 80 ? 'danger' : usedDays180 > 60 ? 'warning' : 'good');
+                (usedDays180 > 90 ? 'danger' : usedDays180 > 80 ? 'warning' : usedDays180 > 60 ? 'warning' : 'good');
 
             document.getElementById('remainingDays').textContent = remainingDays;
             document.getElementById('remainingDays').className = 'result-value ' +
-                (remainingDays < 10 ? 'danger' : remainingDays < 30 ? 'warning' : 'good');
+                (remainingDays === 0 ? 'danger' : remainingDays < 10 ? 'danger' : remainingDays < 30 ? 'warning' : 'good');
 
             document.getElementById('windowDates').textContent =
                 `${formatDateDisplay(windowStart180)} - ${formatDateDisplay(referenceDate)}`;
@@ -770,12 +895,43 @@
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${Math.min(percentage, 100)}%`;
 
-            if (percentage > 90) {
+            if (percentage > 100) {
+                progressFill.style.background = 'linear-gradient(90deg, #e63946, #c1121f)';
+            } else if (percentage > 90) {
                 progressFill.style.background = 'linear-gradient(90deg, #e63946, #c1121f)';
             } else if (percentage > 70) {
                 progressFill.style.background = 'linear-gradient(90deg, #ffc107, #ff9800)';
             } else {
                 progressFill.style.background = 'linear-gradient(90deg, #2ec4b6, #00d4ff)';
+            }
+
+            // Overstay warning
+            const overstayWarning = document.getElementById('overstayWarning');
+            if (ongoingStay && isOverstay) {
+                // User is currently in Schengen and overstaying
+                overstayWarning.style.display = 'block';
+                document.getElementById('overstayWarningText').innerHTML = tf('overstayWarningText', overstayDays);
+
+                // Calculate when they should have left
+                const entryDate = parseDate(ongoingStay.entry);
+                const currentDays = daysDifference(entryDate, referenceDate) + 1;
+
+                // Find how many days ago they should have left
+                const shouldLeaveDate = new Date(windowStart180);
+                shouldLeaveDate.setDate(shouldLeaveDate.getDate() + 90);
+
+                if (referenceDate > shouldLeaveDate) {
+                    const daysAgo = daysDifference(shouldLeaveDate, referenceDate);
+                    document.getElementById('overstayAdvice').textContent = tf('shouldHaveLeft', daysAgo);
+                } else {
+                    document.getElementById('overstayAdvice').textContent = t('mustLeaveToday');
+                }
+            } else if (ongoingStay) {
+                // User is currently in Schengen but not overstaying (yet)
+                overstayWarning.style.display = 'none';
+                // Could show positive message
+            } else {
+                overstayWarning.style.display = 'none';
             }
 
             calculateNextEntryDate(referenceDate, usedDaysInWindow);

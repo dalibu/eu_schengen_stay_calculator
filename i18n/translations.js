@@ -141,7 +141,22 @@ const de = {
     // Monate
     months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
     monthsShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-    weekdays: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    weekdays: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+
+    // Ongoing stay
+    ongoingStayLabel: "Ich bin derzeit im Schengen-Raum",
+    exitDateOptional: "Ausreisedatum (optional bei aktuellem Aufenthalt)",
+    ongoingStay: "Aktueller Aufenthalt",
+    ongoingStayBadge: "🔴 Aktuell im Schengen-Raum",
+    msgErrorPreviousNoExit: "Vorherige Aufenthalte müssen ein Ausreisedatum haben!",
+    msgOngoingStayAdded: "Aktueller Aufenthalt hinzugefügt (seit {0})",
+    overstayWarningTitle: "⚠️ ACHTUNG: Überschreitung!",
+    overstayWarningText: "Sie haben das 90-Tage-Limit überschritten! Sie sind {0} Tage über dem Limit.",
+    overstayDaysOver: "{0} Tage überschritten",
+    canStayMore: "Sie können noch {0} Tag(e) bleiben",
+    mustLeaveToday: "Sie müssen heute ausreisen!",
+    shouldHaveLeft: "Sie hätten vor {0} Tag(en) ausreisen müssen!",
+    currentStayDays: "Aktueller Aufenthalt: {0} Tag(e)"
 };
 
 // =====================================================
@@ -274,7 +289,22 @@ const en = {
     // Months
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    weekdays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+    weekdays: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+
+    // Ongoing stay
+    ongoingStayLabel: "I am currently in the Schengen area",
+    exitDateOptional: "Exit date (optional for current stay)",
+    ongoingStay: "Current stay",
+    ongoingStayBadge: "🔴 Currently in Schengen area",
+    msgErrorPreviousNoExit: "Previous stays must have an exit date!",
+    msgOngoingStayAdded: "Current stay added (since {0})",
+    overstayWarningTitle: "⚠️ WARNING: Overstay!",
+    overstayWarningText: "You have exceeded the 90-day limit! You are {0} days over the limit.",
+    overstayDaysOver: "{0} days over limit",
+    canStayMore: "You can stay {0} more day(s)",
+    mustLeaveToday: "You must leave today!",
+    shouldHaveLeft: "You should have left {0} day(s) ago!",
+    currentStayDays: "Current stay: {0} day(s)"
 };
 
 // =====================================================
@@ -407,7 +437,22 @@ const uk = {
     // Місяці
     months: ["Січень", "Лютий", "Березень", "Квітень", "Травень", "Червень", "Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"],
     monthsShort: ["Січ", "Лют", "Бер", "Кві", "Тра", "Чер", "Лип", "Сер", "Вер", "Жов", "Лис", "Гру"],
-    weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"]
+    weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"],
+
+    // Поточне перебування
+    ongoingStayLabel: "Я зараз у Шенгенській зоні",
+    exitDateOptional: "Дата виїзду (необов'язково для поточного перебування)",
+    ongoingStay: "Поточне перебування",
+    ongoingStayBadge: "🔴 Зараз у Шенгенській зоні",
+    msgErrorPreviousNoExit: "Попередні перебування повинні мати дату виїзду!",
+    msgOngoingStayAdded: "Поточне перебування додано (з {0})",
+    overstayWarningTitle: "⚠️ УВАГА: Перевищення терміну!",
+    overstayWarningText: "Ви перевищили ліміт 90 днів! Ви перебуваєте понад ліміт {0} днів.",
+    overstayDaysOver: "Перевищено на {0} днів",
+    canStayMore: "Ви можете залишитися ще {0} день(днів)",
+    mustLeaveToday: "Ви повинні виїхати сьогодні!",
+    shouldHaveLeft: "Ви повинні були виїхати {0} день(днів) тому!",
+    currentStayDays: "Поточне перебування: {0} день(днів)"
 };
 
 // =====================================================
@@ -540,7 +585,22 @@ const ru = {
     // Месяцы
     months: ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
     monthsShort: ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"],
-    weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    weekdays: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+
+    // Текущее пребывание
+    ongoingStayLabel: "Я сейчас в Шенгенской зоне",
+    exitDateOptional: "Дата выезда (необязательно для текущего пребывания)",
+    ongoingStay: "Текущее пребывание",
+    ongoingStayBadge: "🔴 Сейчас в Шенгенской зоне",
+    msgErrorPreviousNoExit: "Предыдущие пребывания должны иметь дату выезда!",
+    msgOngoingStayAdded: "Текущее пребывание добавлено (с {0})",
+    overstayWarningTitle: "⚠️ ВНИМАНИЕ: Превышение срока!",
+    overstayWarningText: "Вы превысили лимит 90 дней! Вы находитесь сверх лимита {0} дней.",
+    overstayDaysOver: "Превышено на {0} дней",
+    canStayMore: "Вы можете остаться ещё {0} день(дней)",
+    mustLeaveToday: "Вы должны выехать сегодня!",
+    shouldHaveLeft: "Вы должны были выехать {0} день(дней) назад!",
+    currentStayDays: "Текущее пребывание: {0} день(дней)"
 };
 
 // =====================================================

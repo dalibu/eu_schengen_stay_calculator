@@ -126,7 +126,24 @@ const de = {
     // Monate
     months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
     monthsShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-    weekdays: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    weekdays: ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+
+    // Ongoing stay (new)
+    ongoingStayLabel: "Ich bin derzeit im Schengen-Raum",
+    exitDateOptional: "Ausreisedatum (optional bei aktuellem Aufenthalt)",
+    ongoingStay: "Aktueller Aufenthalt",
+    ongoingStayBadge: "🔴 Aktuell im Schengen-Raum",
+    msgErrorPreviousNoExit: "Vorherige Aufenthalte müssen ein Ausreisedatum haben!",
+    msgOngoingStayAdded: "Aktueller Aufenthalt hinzugefügt (seit {0})",
+
+    // Overstay warnings
+    overstayWarningTitle: "⚠️ ACHTUNG: Überschreitung!",
+    overstayWarningText: "Sie haben das 90-Tage-Limit überschritten! Sie sind {0} Tage über dem Limit.",
+    overstayDaysOver: "{0} Tage überschritten",
+    canStayMore: "Sie können noch {0} Tag(e) bleiben",
+    mustLeaveToday: "Sie müssen heute ausreisen!",
+    shouldHaveLeft: "Sie hätten vor {0} Tag(en) ausreisen müssen!",
+    currentStayDays: "Aktueller Aufenthalt: {0} Tag(e)"
 };
 
 export default de;
