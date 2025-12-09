@@ -1,0 +1,947 @@
+/**
+ * Schengen Stay Calculator - Styles
+ * 
+ * Main CSS file for the Schengen Stay Calculator application.
+ * Features a dark theme with gradient accents and glassmorphism effects.
+ */
+
+/* =====================================================
+   RESET & BASE
+   ===================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #fff;
+}
+
+/* =====================================================
+   LAYOUT
+   ===================================================== */
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* =====================================================
+   TYPOGRAPHY
+   ===================================================== */
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* =====================================================
+   LANGUAGE SELECTOR
+   ===================================================== */
+.language-selector {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.lang-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.lang-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.lang-btn.active {
+    background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+    color: #fff;
+}
+
+/* =====================================================
+   INFO BOX
+   ===================================================== */
+.info-box {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.info-box h3 {
+    color: #00d4ff;
+    margin-bottom: 10px;
+}
+
+.info-box p {
+    color: #ccc;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.card.full-width {
+    grid-column: 1 / -1;
+}
+
+.card h2 {
+    color: #00d4ff;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(0, 212, 255, 0.3);
+}
+
+/* =====================================================
+   FORMS
+   ===================================================== */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-weight: 500;
+}
+
+input[type="date"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input[type="date"]:focus,
+input[type="number"]:focus,
+select:focus {
+    outline: none;
+    border-color: #00d4ff;
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+select option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00d4ff, #0099cc);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.4);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #7b2cbf, #5a189a);
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(123, 44, 191, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #e63946, #c1121f);
+    color: #fff;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(230, 57, 70, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #2ec4b6, #1b9e8f);
+    color: #fff;
+}
+
+/* =====================================================
+   STAYS LIST
+   ===================================================== */
+.stays-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 15px;
+}
+
+.stay-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid #00d4ff;
+}
+
+.stay-item .dates {
+    font-weight: 500;
+}
+
+.stay-item .days {
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+.stay-item .delete-btn {
+    background: rgba(230, 57, 70, 0.3);
+    border: none;
+    color: #e63946;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.stay-item .delete-btn:hover {
+    background: #e63946;
+    color: #fff;
+}
+
+/* =====================================================
+   RESULTS
+   ===================================================== */
+.result-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-label {
+    color: #aaa;
+}
+
+.result-value {
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.result-value.good {
+    color: #2ec4b6;
+}
+
+.result-value.warning {
+    color: #ffc107;
+}
+
+.result-value.danger {
+    color: #e63946;
+}
+
+/* =====================================================
+   PROGRESS BAR
+   ===================================================== */
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease, background 0.3s ease;
+}
+
+/* =====================================================
+   STATISTICS
+   ===================================================== */
+.summary-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-box {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2.5em;
+    font-weight: 700;
+    background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    color: #aaa;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+
+/* =====================================================
+   PLANNING
+   ===================================================== */
+.planning-result {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(46, 196, 182, 0.2);
+    border-radius: 15px;
+    border: 1px solid rgba(46, 196, 182, 0.4);
+}
+
+.planning-result h4 {
+    color: #2ec4b6;
+    margin-bottom: 10px;
+}
+
+/* =====================================================
+   CIRCULAR CHART
+   ===================================================== */
+.circular-chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 600px;
+    height: 600px;
+}
+
+#circularChart {
+    width: 100%;
+    height: 100%;
+}
+
+.chart-legend {
+    flex: 1;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+
+.chart-legend h4 {
+    color: #00d4ff;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.legend-item:last-child {
+    border-bottom: none;
+}
+
+.legend-color-box {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.legend-text {
+    flex: 1;
+}
+
+.legend-text .label {
+    color: #fff;
+    font-weight: 500;
+}
+
+.legend-text .value {
+    color: #aaa;
+    font-size: 0.85em;
+}
+
+.chart-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.chart-stat {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.chart-stat-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #00d4ff;
+}
+
+.chart-stat-label {
+    color: #aaa;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.chart-direction-info {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 10px;
+    font-size: 0.9em;
+    color: #ffc107;
+}
+
+.chart-direction-info strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* =====================================================
+   CALENDAR
+   ===================================================== */
+.calendar-section {
+    margin-top: 30px;
+}
+
+.calendar-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.calendar-controls label {
+    margin-bottom: 0;
+    color: #fff;
+}
+
+.year-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.year-nav button {
+    padding: 8px 15px;
+    margin: 0;
+}
+
+.year-display {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #00d4ff;
+    min-width: 80px;
+    text-align: center;
+}
+
+.calendar-year-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.month-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-card.has-stays {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+}
+
+.month-card.in-window {
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.month-title {
+    text-align: center;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #00d4ff;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 10px;
+    font-size: 0.8em;
+}
+
+.month-stats span {
+    padding: 3px 8px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.month-stats .stay-days {
+    background: rgba(0, 212, 255, 0.3);
+    color: #00d4ff;
+}
+
+/* =====================================================
+   MINI CALENDAR
+   ===================================================== */
+.mini-calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.mini-calendar-header {
+    text-align: center;
+    font-size: 0.7em;
+    color: #888;
+    padding: 5px 0;
+    font-weight: 600;
+}
+
+.mini-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    border-radius: 5px;
+    cursor: default;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.mini-day:hover:not(.empty) {
+    transform: scale(1.1);
+    z-index: 10;
+}
+
+.mini-day.empty {
+    background: transparent;
+}
+
+.mini-day.today {
+    border: 2px solid #fff;
+    font-weight: 700;
+}
+
+.mini-day.reference {
+    box-shadow: 0 0 0 2px #ffc107;
+}
+
+.mini-day.stay {
+    background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+    color: #fff;
+    font-weight: 600;
+}
+
+.mini-day.stay-start {
+    border-radius: 5px 0 0 5px;
+    background: linear-gradient(135deg, #2ec4b6, #00d4ff);
+}
+
+.mini-day.stay-end {
+    border-radius: 0 5px 5px 0;
+    background: linear-gradient(135deg, #7b2cbf, #e63946);
+}
+
+.mini-day.stay-single {
+    border-radius: 5px;
+    background: linear-gradient(135deg, #2ec4b6, #e63946);
+}
+
+.mini-day.outside-window {
+    opacity: 0.3;
+}
+
+.mini-day.window-edge {
+    border: 1px dashed #ffc107;
+}
+
+.mini-day .tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    white-space: nowrap;
+    z-index: 100;
+    margin-bottom: 5px;
+}
+
+.mini-day:hover .tooltip {
+    display: block;
+}
+
+/* =====================================================
+   LEGEND
+   ===================================================== */
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.legend-item-cal {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+}
+
+/* =====================================================
+   TIMELINE
+   ===================================================== */
+.timeline {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+}
+
+.timeline h3 {
+    color: #00d4ff;
+    margin-bottom: 20px;
+}
+
+.timeline-bar {
+    position: relative;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.timeline-segment {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+    opacity: 0.8;
+}
+
+.timeline-marker {
+    position: absolute;
+    top: -10px;
+    bottom: -10px;
+    width: 3px;
+    background: #ffc107;
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    color: #aaa;
+    font-size: 0.8em;
+}
+
+/* =====================================================
+   EXPORT SECTION
+   ===================================================== */
+.export-section {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.export-section h4 {
+    color: #aaa;
+    margin-bottom: 10px;
+}
+
+/* =====================================================
+   NOTIFICATIONS
+   ===================================================== */
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    border-radius: 10px;
+    color: #fff;
+    font-weight: 500;
+    animation: slideDown 0.3s ease;
+    z-index: 1001;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #2ec4b6, #1b9e8f);
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #e63946, #c1121f);
+}
+
+/* =====================================================
+   YEAR SUMMARY
+   ===================================================== */
+.year-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.year-stat {
+    text-align: center;
+    padding: 10px;
+}
+
+.year-stat-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #00d4ff;
+}
+
+.year-stat-label {
+    font-size: 0.85em;
+    color: #aaa;
+}
+
+/* =====================================================
+   STAYS IN VIEW
+   ===================================================== */
+.stays-in-view {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+.stays-in-view h4 {
+    color: #00d4ff;
+    margin-bottom: 15px;
+}
+
+.stay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 15px;
+    margin: 5px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(123, 44, 191, 0.2));
+    border-radius: 20px;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    font-size: 0.9em;
+}
+
+.stay-badge .stay-dates {
+    color: #fff;
+}
+
+.stay-badge .stay-count {
+    background: rgba(0, 212, 255, 0.3);
+    padding: 2px 8px;
+    border-radius: 10px;
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+/* =====================================================
+   SCROLL TO CURRENT BUTTON
+   ===================================================== */
+.scroll-to-current {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.scroll-to-current:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(0, 212, 255, 0.4);
+}
+
+/* =====================================================
+   ANIMATIONS
+   ===================================================== */
+@keyframes slideDown {
+    from {
+        transform: translateX(-50%) translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(0, 212, 255, 0);
+    }
+}
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    .calendar-year-container {
+        grid-template-columns: 1fr;
+    }
+
+    .mini-day {
+        font-size: 0.7em;
+    }
+
+    .chart-wrapper {
+        width: 100%;
+        height: 400px;
+    }
+
+    .circular-chart-container {
+        flex-direction: column;
+    }
+
+    .language-selector {
+        top: 10px;
+        right: 10px;
+        padding: 5px;
+    }
+
+    .lang-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+}

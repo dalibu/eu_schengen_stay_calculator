@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Schengen-Aufenthaltsrechner</title>
+</head>
+
+<body>
+    <!-- Sprachauswahl -->
+    <div class="language-selector">
+        <button class="lang-btn active" onclick="setLanguage('de')" data-lang="de">DE</button>
+        <button class="lang-btn" onclick="setLanguage('en')" data-lang="en">EN</button>
+        <button class="lang-btn" onclick="setLanguage('uk')" data-lang="uk">UA</button>
+        <button class="lang-btn" onclick="setLanguage('ru')" data-lang="ru">RU</button>
+    </div>
+
+    <div class="container">
+        <h1 data-i18n="title">🇪🇺 Schengen-Aufenthaltsrechner</h1>
+
+        <div class="info-box">
+            <h3 data-i18n="infoTitle">ℹ️ Schengen-Regel (90/180-Tage-Regel)</h3>
+            <p data-i18n="infoText">
+                Drittstaatsangehörige dürfen sich maximal <strong>90 Tage</strong> innerhalb eines
+                <strong>rollierenden 180-Tage-Zeitraums</strong> im Schengen-Raum aufhalten.
+                Das bedeutet: An jedem beliebigen Tag wird geprüft, wie viele Tage Sie in den
+                vergangenen 180 Tagen im Schengen-Raum verbracht haben. Diese Zahl darf 90 nicht überschreiten.
+            </p>
+        </div>
+
+        <div class="grid">
+            <!-- Bezugsdatum -->
+            <div class="card">
+                <h2 data-i18n="referenceDateTitle">📅 Bezugsdatum</h2>
+                <div class="form-group">
+                    <label for="referenceDate" data-i18n="referenceDateLabel">Berechnungsdatum (Standard: heute)</label>
+                    <input type="date" id="referenceDate">
+                </div>
+                <button class="btn-primary" onclick="setToday()" data-i18n="btnToday">Heute</button>
+                <button class="btn-secondary" onclick="calculate()" data-i18n="btnCalculate">Berechnen</button>
+            </div>
+
+            <!-- Aufenthalt hinzufügen -->
+            <div class="card">
+                <h2 data-i18n="addStayTitle">✈️ Aufenthalt hinzufügen</h2>
+                <div class="form-group">
+                    <label for="entryDate" data-i18n="entryDateLabel">Einreisedatum</label>
+                    <input type="date" id="entryDate">
+                </div>
+                <div class="form-group">
+                    <label for="exitDate" data-i18n="exitDateLabel">Ausreisedatum</label>
+                    <input type="date" id="exitDate">
+                </div>
+                <button class="btn-success" onclick="addStay()" data-i18n="btnAddStay">Aufenthalt hinzufügen</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Aufenthaltsliste -->
+            <div class="card">
+                <h2 data-i18n="staysListTitle">📋 Aufenthalte</h2>
+                <button class="btn-danger" onclick="clearAllStays()" data-i18n="btnDeleteAll">Alle löschen</button>
+                <button class="btn-secondary" onclick="loadExample()" data-i18n="btnLoadExample">Beispieldaten
+                    laden</button>
+                <div class="stays-list" id="staysList"></div>
+
+                <div class="summary-stats" id="summaryStats">
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalStaysCount">0</div>
+                        <div class="stat-label" data-i18n="staysCount">Aufenthalte</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" id="totalDaysCount">0</div>
+                        <div class="stat-label" data-i18n="daysTotal">Tage gesamt</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ergebnisse -->
+            <div class="card">
+                <h2 data-i18n="resultsTitle">📊 Ergebnisse</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="result-box" id="resultBox">
+                    <div class="result-row">
+                        <span class="result-label" data-i18n="usedDaysLabel">Verbrauchte Tage (180-Tage-Fenster):</span>
+                        <span class="result-value" id="usedDays">-</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label" data-i18n="remainingDaysLabel">Verbleibende Tage:</span>
+                        <span class="result-value" id="remainingDays">-</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label" data-i18n="windowDatesLabel">180-Tage-Fenster:</span>
+                        <span class="result-value" id="windowDates">-</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label" data-i18n="nextEntryLabel">Nächstes Einreisedatum:</span>
+                        <span class="result-value" id="nextEntryDate">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kreisdiagramm -->
+        <div class="card full-width">
+            <h2 data-i18n="chartTitle">🔄 365-Tage Kreisdiagramm</h2>
+            <div class="circular-chart-container">
+                <div class="chart-wrapper">
+                    <canvas id="circularChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <h4 data-i18n="legendTitle">Legende & Statistik</h4>
+                    <div class="legend-item">
+                        <div class="legend-color-box" style="background: linear-gradient(135deg, #00d4ff, #7b2cbf);">
+                        </div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendStays365">Aufenthaltstage (365 Tage)</div>
+                            <div class="value" id="legendStays365">0 Tage</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-box"
+                            style="background: rgba(255, 193, 7, 0.3); border: 2px solid #ffc107;"></div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendWindow180">180-Tage-Fenster</div>
+                            <div class="value" id="legendWindow180">-</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-box"
+                            style="background: rgba(230, 57, 70, 0.3); border: 2px solid #e63946;"></div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendLimit90">90-Tage-Limit</div>
+                            <div class="value" id="legendLimit90">-</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-box" style="background: #2ec4b6;"></div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendStaysIn180">Aufenthalte im 180-Tage-Fenster</div>
+                            <div class="value" id="legendStays180">0 Tage</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-box" style="background: #e63946;"></div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendStaysOutside">Aufenthalte außerhalb (181-365 Tage)</div>
+                            <div class="value" id="legendStaysOutside">0 Tage</div>
+                        </div>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color-box" style="background: #fff; border-radius: 50%;"></div>
+                        <div class="legend-text">
+                            <div class="label" data-i18n="legendRefDate">Bezugsdatum</div>
+                            <div class="value" id="legendReferenceDate">-</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-stats">
+                        <div class="chart-stat">
+                            <div class="chart-stat-value" id="chartUsedPercent">0%</div>
+                            <div class="chart-stat-label" data-i18n="chartLimitUsed">vom 90-Tage-Limit</div>
+                        </div>
+                        <div class="chart-stat">
+                            <div class="chart-stat-value" id="chartRemainingDays">90</div>
+                            <div class="chart-stat-label" data-i18n="chartDaysRemaining">Tage verbleibend</div>
+                        </div>
+                        <div class="chart-stat">
+                            <div class="chart-stat-value" id="chartWindowUsed">0%</div>
+                            <div class="chart-stat-label" data-i18n="chartWindowUsed">180-Fenster genutzt</div>
+                        </div>
+                        <div class="chart-stat">
+                            <div class="chart-stat-value" id="chartYearUsed">0%</div>
+                            <div class="chart-stat-label" data-i18n="chartYearUsed">365-Tage genutzt</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-direction-info">
+                        <strong data-i18n="chartDirectionTitle">↻ Zeitrichtung im Uhrzeigersinn</strong>
+                        <span data-i18n="chartDirectionText">Start (vor 365 Tagen) oben → Zeit läuft im Uhrzeigersinn →
+                            Bezugsdatum oben (Ende)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aufenthaltsplanung -->
+        <div class="card">
+            <h2 data-i18n="planningTitle">🎯 Aufenthalt planen</h2>
+            <p style="color: #aaa; margin-bottom: 20px;" data-i18n="planningDesc">
+                Berechnen Sie, ab wann Sie für eine bestimmte Anzahl von Tagen einreisen können.
+            </p>
+            <div class="grid" style="margin-bottom: 0;">
+                <div class="form-group">
+                    <label for="desiredDays" data-i18n="desiredDaysLabel">Gewünschte Aufenthaltsdauer (Tage)</label>
+                    <input type="number" id="desiredDays" min="1" max="90" value="20">
+                </div>
+                <div class="form-group">
+                    <label for="planFromDate" data-i18n="planFromLabel">Planen ab Datum</label>
+                    <input type="date" id="planFromDate">
+                </div>
+            </div>
+            <button class="btn-primary" onclick="planStay()" data-i18n="btnPlanStay">Einreisedatum berechnen</button>
+            <div class="planning-result" id="planningResult" style="display: none;"></div>
+        </div>
+
+        <!-- Jahreskalender -->
+        <div class="card calendar-section">
+            <h2 data-i18n="calendarTitle">📆 Jahreskalender</h2>
+
+            <div class="calendar-controls">
+                <div class="year-nav">
+                    <button class="btn-secondary" onclick="prevYear()">◀</button>
+                    <span class="year-display" id="yearDisplay"></span>
+                    <button class="btn-secondary" onclick="nextYear()">▶</button>
+                </div>
+                <button class="btn-primary" onclick="goToCurrentYear()" data-i18n="btnCurrentYear">Aktuelles
+                    Jahr</button>
+                <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                    <select id="viewRange" onchange="renderFullCalendar()">
+                        <option value="1" data-i18n="view1Year">1 Jahr anzeigen</option>
+                        <option value="2" selected data-i18n="view2Years">2 Jahre anzeigen</option>
+                        <option value="3" data-i18n="view3Years">3 Jahre anzeigen</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="year-summary" id="yearSummary"></div>
+            <div class="stays-in-view" id="staysInView"></div>
+            <div class="calendar-year-container" id="calendarYearContainer"></div>
+
+            <div class="legend">
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #00d4ff, #7b2cbf);"></div>
+                    <span data-i18n="calLegendStay">Aufenthaltstage</span>
+                </div>
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #2ec4b6, #00d4ff);"></div>
+                    <span data-i18n="calLegendEntry">Einreise</span>
+                </div>
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #7b2cbf, #e63946);"></div>
+                    <span data-i18n="calLegendExit">Ausreise</span>
+                </div>
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="border: 2px solid #fff;"></div>
+                    <span data-i18n="calLegendToday">Heute</span>
+                </div>
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="box-shadow: 0 0 0 2px #ffc107;"></div>
+                    <span data-i18n="calLegendRef">Bezugsdatum</span>
+                </div>
+                <div class="legend-item-cal">
+                    <div class="legend-color" style="opacity: 0.3; background: #666;"></div>
+                    <span data-i18n="calLegendOutside">Außerhalb 180-Tage-Fenster</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="card timeline" id="timelineContainer">
+            <h3 data-i18n="timelineTitle">📈 180-Tage-Fenster Visualisierung</h3>
+            <div class="timeline-bar" id="timelineBar"></div>
+            <div class="timeline-labels" id="timelineLabels"></div>
+        </div>
+
+        <!-- Export/Import -->
+        <div class="card">
+            <h2 data-i18n="dataManageTitle">💾 Daten verwalten</h2>
+            <div class="export-section">
+                <h4 data-i18n="exportImportTitle">Aufenthalte exportieren/importieren</h4>
+                <button class="btn-secondary" onclick="exportData()" data-i18n="btnExport">Daten exportieren
+                    (JSON)</button>
+                <button class="btn-secondary" onclick="document.getElementById('importFile').click()"
+                    data-i18n="btnImport">Daten importieren</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+            </div>
+        </div>
+    </div>
+
+    <button class="scroll-to-current" onclick="scrollToCurrentMonth()" data-i18n="btnScrollToMonth">📅 Zum aktuellen
+        Monat</button>
+
+    <!-- Translations loaded from external file -->
+    <script src="i18n/translations.js"></script>
+    <script>
+        // =====================================================
+        // GLOBALE VARIABLEN
+        // =====================================================
+        let currentLang = 'de';
+        let stays = [];
+        let displayYear = new Date().getFullYear();
+        let chartData = {};
+
+        // =====================================================
+        // LOKALISIERUNGSFUNKTIONEN
+        // =====================================================
+
+        // Text abrufen
+        function t(key) {
+            return translations[currentLang][key] || translations['de'][key] || key;
+        }
+
+        // Text mit Platzhaltern
+        function tf(key, ...args) {
+            let text = t(key);
+            args.forEach((arg, index) => {
+                text = text.replace(`{${index}}`, arg);
+            });
+            return text;
+        }
+
+        // Sprache setzen
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('schengenLang', lang);
+
+            // Buttons aktualisieren
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Alle Texte aktualisieren
+            updateAllTexts();
+
+            // Neu rendern
+            renderStaysList();
+            renderFullCalendar();
+            calculate();
+        }
+
+        // Alle Texte aktualisieren
+        function updateAllTexts() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if (el.tagName === 'OPTION') {
+                        el.textContent = t(key);
+                    } else {
+                        el.innerHTML = t(key);
+                    }
+                }
+            });
+
+            // Seitentitel
+            document.title = t('title').replace('🇪🇺 ', '');
+        }
+
+        // Monatsnamen abrufen
+        function getMonthName(index) {
+            return t('months')[index];
+        }
+
+        function getMonthNameShort(index) {
+            return t('monthsShort')[index];
+        }
+
+        function getWeekday(index) {
+            return t('weekdays')[index];
+        }
+
+        // =====================================================
+        // DATUMSFUNKTIONEN
+        // =====================================================
+
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDateDisplay(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`;
+        }
+
+        function formatDateShort(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            return `${day}.${month}`;
+        }
+
+        function parseDate(dateString) {
+            const parts = dateString.split('-');
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function daysDifference(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.round((date2 - date1) / oneDay);
+        }
+
+        // =====================================================
+        // INITIALISIERUNG
+        // =====================================================
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Gespeicherte Sprache laden
+            const savedLang = localStorage.getItem('schengenLang');
+            if (savedLang && translations[savedLang]) {
+                currentLang = savedLang;
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.lang === savedLang) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            // Texte aktualisieren
+            updateAllTexts();
+
+            // Standarddaten setzen
+            const today = new Date();
+            document.getElementById('referenceDate').value = formatDate(today);
+            document.getElementById('planFromDate').value = formatDate(today);
+
+            // Gespeicherte Aufenthalte laden
+            loadFromLocalStorage();
+
+            // UI rendern
+            renderStaysList();
+            renderFullCalendar();
+            calculate();
+        });
+
+        // =====================================================
+        // AUFENTHALTSVERWALTUNG
+        // =====================================================
+
+        function setToday() {
+            document.getElementById('referenceDate').value = formatDate(new Date());
+            calculate();
+        }
+
+        function addStay() {
+            const entryDate = document.getElementById('entryDate').value;
+            const exitDate = document.getElementById('exitDate').value;
+
+            if (!entryDate || !exitDate) {
+                showNotification(t('msgErrorBothDates'), 'error');
+                return;
+            }
+
+            const entry = parseDate(entryDate);
+            const exit = parseDate(exitDate);
+
+            if (exit < entry) {
+                showNotification(t('msgErrorExitAfterEntry'), 'error');
+                return;
+            }
+
+            const days = daysDifference(entry, exit) + 1;
+
+            stays.push({
+                entry: entryDate,
+                exit: exitDate,
+                days: days
+            });
+
+            stays.sort((a, b) => parseDate(a.entry) - parseDate(b.entry));
+
+            saveToLocalStorage();
+            renderStaysList();
+            renderFullCalendar();
+            calculate();
+
+            document.getElementById('entryDate').value = '';
+            document.getElementById('exitDate').value = '';
+
+            showNotification(tf('msgStayAdded', days), 'success');
+        }
+
+        function deleteStay(index) {
+            stays.splice(index, 1);
+            saveToLocalStorage();
+            renderStaysList();
+            renderFullCalendar();
+            calculate();
+            showNotification(t('msgStayDeleted'), 'success');
+        }
+
+        function clearAllStays() {
+            if (confirm(t('msgConfirmDelete'))) {
+                stays = [];
+                saveToLocalStorage();
+                renderStaysList();
+                renderFullCalendar();
+                calculate();
+                showNotification(t('msgAllDeleted'), 'success');
+            }
+        }
+
+        function renderStaysList() {
+            const container = document.getElementById('staysList');
+
+            if (stays.length === 0) {
+                container.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">${t('noStays')}</p>`;
+                document.getElementById('totalStaysCount').textContent = '0';
+                document.getElementById('totalDaysCount').textContent = '0';
+                return;
+            }
+
+            let html = '';
+            let totalDays = 0;
+
+            stays.forEach((stay, index) => {
+                totalDays += stay.days;
+                const entryDisplay = formatDateDisplay(parseDate(stay.entry));
+                const exitDisplay = formatDateDisplay(parseDate(stay.exit));
+
+                html += `
+                    <div class="stay-item">
+                        <div class="dates">${entryDisplay} - ${exitDisplay}</div>
+                        <div class="days">${stay.days} ${t('days')}</div>
+                        <button class="delete-btn" onclick="deleteStay(${index})">✕</button>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            document.getElementById('totalStaysCount').textContent = stays.length;
+            document.getElementById('totalDaysCount').textContent = totalDays;
+        }
+
+        // =====================================================
+        // LOCAL STORAGE
+        // =====================================================
+
+        function saveToLocalStorage() {
+            localStorage.setItem('schengenStays', JSON.stringify(stays));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('schengenStays');
+            if (saved) {
+                stays = JSON.parse(saved);
+            }
+        }
+
+        // =====================================================
+        // EXPORT / IMPORT
+        // =====================================================
+
+        function exportData() {
+            const data = {
+                stays: stays,
+                exportDate: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `schengen-${formatDate(new Date())}.json`;
+            a.click();
+
+            URL.revokeObjectURL(url);
+            showNotification(t('msgExported'), 'success');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.stays && Array.isArray(data.stays)) {
+                        stays = data.stays;
+                        saveToLocalStorage();
+                        renderStaysList();
+                        renderFullCalendar();
+                        calculate();
+                        showNotification(t('msgImported'), 'success');
+                    } else {
+                        throw new Error('Invalid format');
+                    }
+                } catch (error) {
+                    showNotification(t('msgErrorImport') + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // =====================================================
+        // BENACHRICHTIGUNGEN
+        // =====================================================
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideDown 0.3s ease reverse';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // =====================================================
+        // BEISPIELDATEN
+        // =====================================================
+
+        function loadExample() {
+            const today = new Date();
+
+            stays = [];
+
+            // Aufenthalt 1: Vor 2 Wochen, 15 Tage
+            const stay1End = new Date(today);
+            stay1End.setDate(stay1End.getDate() - 10);
+            const stay1Start = new Date(stay1End);
+            stay1Start.setDate(stay1Start.getDate() - 14);
+            stays.push({
+                entry: formatDate(stay1Start),
+                exit: formatDate(stay1End),
+                days: 15
+            });
+
+            // Aufenthalt 2: Vor 2 Monaten, 21 Tage
+            const stay2End = new Date(today);
+            stay2End.setDate(stay2End.getDate() - 60);
+            const stay2Start = new Date(stay2End);
+            stay2Start.setDate(stay2Start.getDate() - 20);
+            stays.push({
+                entry: formatDate(stay2Start),
+                exit: formatDate(stay2End),
+                days: 21
+            });
+
+            // Aufenthalt 3: Vor 4 Monaten, 10 Tage
+            const stay3End = new Date(today);
+            stay3End.setDate(stay3End.getDate() - 120);
+            const stay3Start = new Date(stay3End);
+            stay3Start.setDate(stay3Start.getDate() - 9);
+            stays.push({
+                entry: formatDate(stay3Start),
+                exit: formatDate(stay3End),
+                days: 10
+            });
+
+            // Aufenthalt 4: Vor 6 Monaten, 7 Tage
+            const stay4End = new Date(today);
+            stay4End.setDate(stay4End.getDate() - 200);
+            const stay4Start = new Date(stay4End);
+            stay4Start.setDate(stay4Start.getDate() - 6);
+            stays.push({
+                entry: formatDate(stay4Start),
+                exit: formatDate(stay4End),
+                days: 7
+            });
+
+            // Aufenthalt 5: Vor 10 Monaten, 14 Tage
+            const stay5End = new Date(today);
+            stay5End.setDate(stay5End.getDate() - 300);
+            const stay5Start = new Date(stay5End);
+            stay5Start.setDate(stay5Start.getDate() - 13);
+            stays.push({
+                entry: formatDate(stay5Start),
+                exit: formatDate(stay5End),
+                days: 14
+            });
+
+            stays.sort((a, b) => parseDate(a.entry) - parseDate(b.entry));
+
+            saveToLocalStorage();
+            renderStaysList();
+            renderFullCalendar();
+            calculate();
+            showNotification(t('msgExampleLoaded'), 'success');
+        }
+
+        // =====================================================
+        // HAUPTBERECHNUNG
+        // =====================================================
+
+        function calculate() {
+            const referenceDateStr = document.getElementById('referenceDate').value;
+            if (!referenceDateStr) return;
+
+            const referenceDate = parseDate(referenceDateStr);
+
+            // 180-Tage-Fenster
+            const windowStart180 = new Date(referenceDate);
+            windowStart180.setDate(windowStart180.getDate() - 179);
+
+            // 365-Tage-Fenster für Kreisdiagramm
+            const windowStart365 = new Date(referenceDate);
+            windowStart365.setDate(windowStart365.getDate() - 364);
+
+            let usedDays180 = 0;
+            let usedDays365 = 0;
+            let usedDaysOutside180 = 0;
+            const usedDaysInWindow = [];
+            const staySegments365 = [];
+
+            stays.forEach(stay => {
+                const entryDate = parseDate(stay.entry);
+                const exitDate = parseDate(stay.exit);
+
+                const segmentStart = new Date(Math.max(entryDate.getTime(), windowStart365.getTime()));
+                const segmentEnd = new Date(Math.min(exitDate.getTime(), referenceDate.getTime()));
+
+                if (segmentEnd >= segmentStart) {
+                    staySegments365.push({
+                        start: segmentStart,
+                        end: segmentEnd,
+                        originalEntry: entryDate,
+                        originalExit: exitDate,
+                        inWindow180: segmentStart >= windowStart180
+                    });
+                }
+
+                for (let d = new Date(entryDate); d <= exitDate; d.setDate(d.getDate() + 1)) {
+                    if (d >= windowStart180 && d <= referenceDate) {
+                        usedDays180++;
+                        usedDaysInWindow.push(new Date(d));
+                    }
+                    if (d >= windowStart365 && d <= referenceDate) {
+                        usedDays365++;
+                        if (d < windowStart180) {
+                            usedDaysOutside180++;
+                        }
+                    }
+                }
+            });
+
+            const remainingDays = Math.max(0, 90 - usedDays180);
+
+            chartData = {
+                referenceDate: referenceDate,
+                windowStart180: windowStart180,
+                windowStart365: windowStart365,
+                usedDays180: usedDays180,
+                usedDays365: usedDays365,
+                usedDaysOutside180: usedDaysOutside180,
+                remainingDays: remainingDays,
+                staySegments365: staySegments365
+            };
+
+            // UI aktualisieren
+            document.getElementById('usedDays').textContent = usedDays180;
+            document.getElementById('usedDays').className = 'result-value ' +
+                (usedDays180 > 80 ? 'danger' : usedDays180 > 60 ? 'warning' : 'good');
+
+            document.getElementById('remainingDays').textContent = remainingDays;
+            document.getElementById('remainingDays').className = 'result-value ' +
+                (remainingDays < 10 ? 'danger' : remainingDays < 30 ? 'warning' : 'good');
+
+            document.getElementById('windowDates').textContent =
+                `${formatDateDisplay(windowStart180)} - ${formatDateDisplay(referenceDate)}`;
+
+            const percentage = (usedDays180 / 90) * 100;
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${Math.min(percentage, 100)}%`;
+
+            if (percentage > 90) {
+                progressFill.style.background = 'linear-gradient(90deg, #e63946, #c1121f)';
+            } else if (percentage > 70) {
+                progressFill.style.background = 'linear-gradient(90deg, #ffc107, #ff9800)';
+            } else {
+                progressFill.style.background = 'linear-gradient(90deg, #2ec4b6, #00d4ff)';
+            }
+
+            calculateNextEntryDate(referenceDate, usedDaysInWindow);
+            renderTimeline(windowStart180, referenceDate);
+            renderCircularChart();
+        }
+
+        function calculateNextEntryDate(referenceDate, usedDaysInWindow) {
+            if (usedDaysInWindow.length < 90) {
+                document.getElementById('nextEntryDate').textContent = t('immediateEntry');
+                document.getElementById('nextEntryDate').className = 'result-value good';
+                return;
+            }
+
+            usedDaysInWindow.sort((a, b) => a - b);
+
+            let nextDate = new Date(referenceDate);
+            nextDate.setDate(nextDate.getDate() + 1);
+
+            for (let i = 0; i < 365; i++) {
+                const testWindowStart = new Date(nextDate);
+                testWindowStart.setDate(testWindowStart.getDate() - 179);
+
+                let daysInWindow = 0;
+                for (const day of usedDaysInWindow) {
+                    if (day >= testWindowStart && day <= nextDate) {
+                        daysInWindow++;
+                    }
+                }
+
+                if (daysInWindow < 90) {
+                    document.getElementById('nextEntryDate').textContent = formatDateDisplay(nextDate);
+                    document.getElementById('nextEntryDate').className = 'result-value good';
+                    return;
+                }
+
+                nextDate.setDate(nextDate.getDate() + 1);
+            }
+
+            document.getElementById('nextEntryDate').textContent = t('notCalculable');
+            document.getElementById('nextEntryDate').className = 'result-value warning';
+        }
+
+        // =====================================================
+        // AUFENTHALTSPLANUNG
+        // =====================================================
+
+        function planStay() {
+            const desiredDays = parseInt(document.getElementById('desiredDays').value);
+            const planFromDateStr = document.getElementById('planFromDate').value;
+
+            if (!desiredDays || desiredDays < 1 || desiredDays > 90) {
+                showNotification(t('msgErrorValidDays'), 'error');
+                return;
+            }
+
+            if (!planFromDateStr) {
+                showNotification(t('msgErrorStartDate'), 'error');
+                return;
+            }
+
+            const planFromDate = parseDate(planFromDateStr);
+
+            let testDate = new Date(planFromDate);
+            let foundDate = null;
+            let searchDays = 0;
+            const maxSearchDays = 365;
+
+            while (searchDays < maxSearchDays) {
+                const availableDays = calculateAvailableDays(testDate);
+
+                if (availableDays >= desiredDays) {
+                    foundDate = new Date(testDate);
+                    break;
+                }
+
+                testDate.setDate(testDate.getDate() + 1);
+                searchDays++;
+            }
+
+            const resultContainer = document.getElementById('planningResult');
+            resultContainer.style.display = 'block';
+
+            if (foundDate) {
+                const endDate = new Date(foundDate);
+                endDate.setDate(endDate.getDate() + desiredDays - 1);
+
+                resultContainer.innerHTML = `
+                    <h4>${t('planPossible')}</h4>
+                    <p><strong>${t('planEntryDate')}</strong> ${formatDateDisplay(foundDate)}</p>
+                    <p><strong>${t('planExitDate')}</strong> ${formatDateDisplay(endDate)}</p>
+                    <p><strong>${t('planDuration')}</strong> ${desiredDays} ${t('days')}</p>
+                    ${searchDays > 0 ? `<p><em>${tf('planWaitDays', searchDays)}</em></p>` : ''}
+                `;
+            } else {
+                resultContainer.innerHTML = `
+                    <h4 style="color: #e63946;">${t('planNotPossible')}</h4>
+                    <p>${tf('planNotPossibleText', desiredDays, maxSearchDays)}</p>
+                `;
+            }
+        }
+
+        function calculateAvailableDays(date) {
+            const windowStart = new Date(date);
+            windowStart.setDate(windowStart.getDate() - 179);
+
+            let usedDays = 0;
+
+            stays.forEach(stay => {
+                const entryDate = parseDate(stay.entry);
+                const exitDate = parseDate(stay.exit);
+
+                for (let d = new Date(entryDate); d <= exitDate; d.setDate(d.getDate() + 1)) {
+                    if (d >= windowStart && d <= date) {
+                        usedDays++;
+                    }
+                }
+            });
+
+            return 90 - usedDays;
+        }
+
+        // =====================================================
+        // KALENDER
+        // =====================================================
+
+        function prevYear() {
+            displayYear--;
+            renderFullCalendar();
+        }
+
+        function nextYear() {
+            displayYear++;
+            renderFullCalendar();
+        }
+
+        function goToCurrentYear() {
+            displayYear = new Date().getFullYear();
+            renderFullCalendar();
+            scrollToCurrentMonth();
+        }
+
+        function renderFullCalendar() {
+            const viewRange = parseInt(document.getElementById('viewRange').value);
+            const startYear = displayYear;
+            const endYear = displayYear + viewRange - 1;
+
+            document.getElementById('yearDisplay').textContent =
+                viewRange > 1 ? `${startYear} - ${endYear}` : startYear;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const referenceDateStr = document.getElementById('referenceDate').value;
+            const referenceDate = referenceDateStr ? parseDate(referenceDateStr) : today;
+
+            const windowStart = new Date(referenceDate);
+            windowStart.setDate(windowStart.getDate() - 179);
+
+            const stayDaysMap = new Map();
+            const entryDays = new Set();
+            const exitDays = new Set();
+
+            stays.forEach((stay, stayIndex) => {
+                const entryDate = parseDate(stay.entry);
+                const exitDate = parseDate(stay.exit);
+
+                entryDays.add(entryDate.getTime());
+                exitDays.add(exitDate.getTime());
+
+                for (let d = new Date(entryDate); d <= exitDate; d.setDate(d.getDate() + 1)) {
+                    const key = d.getTime();
+                    if (!stayDaysMap.has(key)) {
+                        stayDaysMap.set(key, []);
+                    }
+                    stayDaysMap.get(key).push(stayIndex);
+                }
+            });
+
+            let totalDaysInView = 0;
+            let staysInView = [];
+
+            stays.forEach(stay => {
+                const entryDate = parseDate(stay.entry);
+                const exitDate = parseDate(stay.exit);
+                const entryYear = entryDate.getFullYear();
+                const exitYear = exitDate.getFullYear();
+
+                if ((entryYear >= startYear && entryYear <= endYear) ||
+                    (exitYear >= startYear && exitYear <= endYear)) {
+                    staysInView.push(stay);
+                    totalDaysInView += stay.days;
+                }
+            });
+
+            document.getElementById('yearSummary').innerHTML = `
+                <div class="year-stat">
+                    <div class="year-stat-value">${staysInView.length}</div>
+                    <div class="year-stat-label">${t('staysInPeriod')}</div>
+                </div>
+                <div class="year-stat">
+                    <div class="year-stat-value">${totalDaysInView}</div>
+                    <div class="year-stat-label">${t('daysInPeriod')}</div>
+                </div>
+                <div class="year-stat">
+                    <div class="year-stat-value">${viewRange * 12}</div>
+                    <div class="year-stat-label">${t('monthsShown')}</div>
+                </div>
+            `;
+
+            let staysHtml = `<h4>${t('staysInViewTitle')}</h4><div>`;
+            if (staysInView.length === 0) {
+                staysHtml += `<p style="color: #aaa;">${t('noStaysInPeriod')}</p>`;
+            } else {
+                staysInView.forEach(stay => {
+                    const entryDisplay = formatDateDisplay(parseDate(stay.entry));
+                    const exitDisplay = formatDateDisplay(parseDate(stay.exit));
+                    staysHtml += `
+                        <div class="stay-badge">
+                            <span class="stay-dates">${entryDisplay} - ${exitDisplay}</span>
+                            <span class="stay-count">${stay.days} ${t('days')}</span>
+                        </div>
+                    `;
+                });
+            }
+            staysHtml += '</div>';
+            document.getElementById('staysInView').innerHTML = staysHtml;
+
+            let calendarHtml = '';
+
+            for (let year = startYear; year <= endYear; year++) {
+                for (let month = 0; month < 12; month++) {
+                    const firstDay = new Date(year, month, 1);
+                    const lastDay = new Date(year, month + 1, 0);
+
+                    let firstDayOfWeek = firstDay.getDay() - 1;
+                    if (firstDayOfWeek < 0) firstDayOfWeek = 6;
+
+                    let monthHasStays = false;
+                    let stayDaysInMonth = 0;
+                    let isInWindow = false;
+
+                    for (let day = 1; day <= lastDay.getDate(); day++) {
+                        const date = new Date(year, month, day);
+                        if (stayDaysMap.has(date.getTime())) {
+                            monthHasStays = true;
+                            stayDaysInMonth++;
+                        }
+                        if (date >= windowStart && date <= referenceDate) {
+                            isInWindow = true;
+                        }
+                    }
+
+                    let monthClasses = ['month-card'];
+                    if (monthHasStays) monthClasses.push('has-stays');
+                    if (isInWindow) monthClasses.push('in-window');
+
+                    calendarHtml += `
+                        <div class="${monthClasses.join(' ')}" id="month-${year}-${month}">
+                            <div class="month-title">${getMonthName(month)} ${year}</div>
+                            ${stayDaysInMonth > 0 ? `
+                                <div class="month-stats">
+                                    <span class="stay-days">${stayDaysInMonth} ${t('stayDays')}</span>
+                                </div>
+                            ` : ''}
+                            <div class="mini-calendar">
+                    `;
+
+                    for (let i = 0; i < 7; i++) {
+                        calendarHtml += `<div class="mini-calendar-header">${getWeekday(i)}</div>`;
+                    }
+
+                    for (let i = 0; i < firstDayOfWeek; i++) {
+                        calendarHtml += '<div class="mini-day empty"></div>';
+                    }
+
+                    for (let day = 1; day <= lastDay.getDate(); day++) {
+                        const date = new Date(year, month, day);
+                        const dateTime = date.getTime();
+
+                        let classes = ['mini-day'];
+                        let tooltipText = '';
+
+                        if (date.getTime() === today.getTime()) {
+                            classes.push('today');
+                            tooltipText = t('tooltipToday');
+                        }
+
+                        if (referenceDateStr && date.getTime() === referenceDate.getTime()) {
+                            classes.push('reference');
+                            tooltipText = tooltipText ? tooltipText + ' | ' + t('tooltipRef') : t('tooltipRef');
+                        }
+
+                        const isStayDay = stayDaysMap.has(dateTime);
+                        const isEntry = entryDays.has(dateTime);
+                        const isExit = exitDays.has(dateTime);
+
+                        if (isStayDay) {
+                            if (isEntry && isExit) {
+                                classes.push('stay-single');
+                                tooltipText = t('tooltipEntryExit');
+                            } else if (isEntry) {
+                                classes.push('stay-start');
+                                tooltipText = t('tooltipEntry');
+                            } else if (isExit) {
+                                classes.push('stay-end');
+                                tooltipText = t('tooltipExit');
+                            } else {
+                                classes.push('stay');
+                            }
+                        }
+
+                        if (date < windowStart || date > referenceDate) {
+                            classes.push('outside-window');
+                        }
+
+                        if (date.getTime() === windowStart.getTime()) {
+                            classes.push('window-edge');
+                            tooltipText = tooltipText ? tooltipText + ' | ' + t('tooltipWindowStart') : t('tooltipWindowStart');
+                        }
+
+                        calendarHtml += `
+                            <div class="${classes.join(' ')}">
+                                ${day}
+                                ${tooltipText ? `<div class="tooltip">${tooltipText}</div>` : ''}
+                            </div>
+                        `;
+                    }
+
+                    calendarHtml += '</div></div>';
+                }
+            }
+
+            document.getElementById('calendarYearContainer').innerHTML = calendarHtml;
+        }
+
+        function scrollToCurrentMonth() {
+            const today = new Date();
+            const monthId = `month-${today.getFullYear()}-${today.getMonth()}`;
+            const monthElement = document.getElementById(monthId);
+
+            if (monthElement) {
+                monthElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                monthElement.style.animation = 'pulse 1s ease';
+                setTimeout(() => {
+                    monthElement.style.animation = '';
+                }, 1000);
+            } else {
+                displayYear = today.getFullYear();
+                renderFullCalendar();
+                setTimeout(() => {
+                    const el = document.getElementById(monthId);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+        }
+
+        // =====================================================
+        // TIMELINE
+        // =====================================================
+
+        function renderTimeline(windowStart, referenceDate) {
+            const timelineBar = document.getElementById('timelineBar');
+            const timelineLabels = document.getElementById('timelineLabels');
+
+            const totalDays = 180;
+            let html = '';
+
+            stays.forEach(stay => {
+                const entryDate = parseDate(stay.entry);
+                const exitDate = parseDate(stay.exit);
+
+                const start = Math.max(0, daysDifference(windowStart, entryDate));
+                const end = Math.min(totalDays - 1, daysDifference(windowStart, exitDate));
+
+                if (end >= 0 && start < totalDays) {
+                    const left = (start / totalDays) * 100;
+                    const width = ((end - start + 1) / totalDays) * 100;
+
+                    html += `<div class="timeline-segment" style="left: ${left}%; width: ${width}%;"></div>`;
+                }
+            });
+
+            const refDayIndex = daysDifference(windowStart, referenceDate);
+            if (refDayIndex >= 0 && refDayIndex < totalDays) {
+                const markerPos = (refDayIndex / totalDays) * 100;
+                html += `<div class="timeline-marker" style="left: ${markerPos}%;"></div>`;
+            }
+
+            timelineBar.innerHTML = html;
+            timelineLabels.innerHTML = `
+                <span>${formatDateDisplay(windowStart)}</span>
+                <span>${t('timelineDays')}</span>
+                <span>${formatDateDisplay(referenceDate)}</span>
+            `;
+        }
+
+        // =====================================================
+        // KREISDIAGRAMM
+        // =====================================================
+
+        function renderCircularChart() {
+            const canvas = document.getElementById('circularChart');
+            const ctx = canvas.getContext('2d');
+
+            const container = canvas.parentElement;
+            const size = Math.min(container.clientWidth, container.clientHeight, 600);
+            canvas.width = size * 2;
+            canvas.height = size * 2;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            ctx.scale(2, 2);
+
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const outerRadius = size / 2 - 60;
+            const innerRadius = size / 5;
+            const labelRadius = size / 2 - 25;
+
+            ctx.clearRect(0, 0, size, size);
+
+            function degToRad(deg) {
+                return (deg - 90) * Math.PI / 180;
+            }
+
+            function dayToDeg(dayIndex) {
+                return (dayIndex / 365) * 360;
+            }
+
+            // Monatsgrenzen berechnen
+            const monthBoundaries = [];
+            let currentDate = new Date(chartData.windowStart365);
+            let dayCounter = 0;
+
+            while (currentDate <= chartData.referenceDate) {
+                if (currentDate.getDate() === 1) {
+                    monthBoundaries.push({
+                        dayIndex: dayCounter,
+                        month: currentDate.getMonth(),
+                        year: currentDate.getFullYear(),
+                        date: new Date(currentDate)
+                    });
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+                dayCounter++;
+            }
+
+            // Hintergrundring
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerRadius, 0, 2 * Math.PI);
+            ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI, true);
+            ctx.fillStyle = 'rgba(255,255,255,0.03)';
+            ctx.fill();
+
+            // Monatssegmente
+            for (let i = 0; i < monthBoundaries.length; i++) {
+                const startDeg = dayToDeg(monthBoundaries[i].dayIndex);
+                const endDeg = i < monthBoundaries.length - 1
+                    ? dayToDeg(monthBoundaries[i + 1].dayIndex)
+                    : 360;
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, outerRadius, degToRad(startDeg), degToRad(endDeg));
+                ctx.arc(centerX, centerY, innerRadius, degToRad(endDeg), degToRad(startDeg), true);
+                ctx.closePath();
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)';
+                ctx.fill();
+            }
+
+            // 180-Tage-Fenster
+            const window180StartDeg = dayToDeg(365 - 180);
+            const window180EndDeg = 360;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerRadius, degToRad(window180StartDeg), degToRad(window180EndDeg));
+            ctx.arc(centerX, centerY, innerRadius, degToRad(window180EndDeg), degToRad(window180StartDeg), true);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 193, 7, 0.1)';
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 193, 7, 0.6)';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // 90-Tage-Limit
+            const window90StartDeg = dayToDeg(365 - 90);
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerRadius - 5, degToRad(window90StartDeg), degToRad(360));
+            ctx.strokeStyle = 'rgba(230, 57, 70, 0.4)';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+
+            // Aufenthaltstage zeichnen
+            if (chartData.staySegments365) {
+                chartData.staySegments365.forEach((segment, idx) => {
+                    const startDayIndex = daysDifference(chartData.windowStart365, segment.start);
+                    const endDayIndex = daysDifference(chartData.windowStart365, segment.end);
+
+                    const startDeg = dayToDeg(startDayIndex);
+                    const endDeg = dayToDeg(endDayIndex + 1);
+
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, outerRadius - 8, degToRad(startDeg), degToRad(endDeg));
+                    ctx.arc(centerX, centerY, innerRadius + 8, degToRad(endDeg), degToRad(startDeg), true);
+                    ctx.closePath();
+
+                    const isInWindow180 = segment.start >= chartData.windowStart180;
+                    ctx.fillStyle = isInWindow180 ? 'rgba(46, 196, 182, 0.8)' : 'rgba(230, 57, 70, 0.6)';
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    // Ein-/Ausreise-Markierungen
+                    const entryDeg = startDeg;
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        centerX + Math.cos(degToRad(entryDeg)) * (innerRadius + 5),
+                        centerY + Math.sin(degToRad(entryDeg)) * (innerRadius + 5)
+                    );
+                    ctx.lineTo(
+                        centerX + Math.cos(degToRad(entryDeg)) * (outerRadius - 5),
+                        centerY + Math.sin(degToRad(entryDeg)) * (outerRadius - 5)
+                    );
+                    ctx.strokeStyle = '#2ec4b6';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+
+                    const exitDeg = endDeg;
+                    ctx.beginPath();
+                    ctx.moveTo(
+                        centerX + Math.cos(degToRad(exitDeg)) * (innerRadius + 5),
+                        centerY + Math.sin(degToRad(exitDeg)) * (innerRadius + 5)
+                    );
+                    ctx.lineTo(
+                        centerX + Math.cos(degToRad(exitDeg)) * (outerRadius - 5),
+                        centerY + Math.sin(degToRad(exitDeg)) * (outerRadius - 5)
+                    );
+                    ctx.strokeStyle = '#e63946';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                });
+            }
+
+            // Monatsmarkierungen und Labels
+            monthBoundaries.forEach((boundary, idx) => {
+                const deg = dayToDeg(boundary.dayIndex);
+
+                ctx.beginPath();
+                ctx.moveTo(
+                    centerX + Math.cos(degToRad(deg)) * (outerRadius + 5),
+                    centerY + Math.sin(degToRad(deg)) * (outerRadius + 5)
+                );
+                ctx.lineTo(
+                    centerX + Math.cos(degToRad(deg)) * (outerRadius - 15),
+                    centerY + Math.sin(degToRad(deg)) * (outerRadius - 15)
+                );
+                ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                const labelDeg = deg + 15;
+                const labelX = centerX + Math.cos(degToRad(labelDeg)) * labelRadius;
+                const labelY = centerY + Math.sin(degToRad(labelDeg)) * labelRadius;
+
+                ctx.save();
+                ctx.translate(labelX, labelY);
+
+                let rotation = labelDeg;
+                if (rotation > 90 && rotation < 270) {
+                    rotation += 180;
+                }
+                ctx.rotate(degToRad(rotation + 90));
+
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.font = 'bold 11px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(getMonthNameShort(boundary.month), 0, 0);
+
+                if (boundary.month === 0) {
+                    ctx.font = '9px Segoe UI';
+                    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                    ctx.fillText(boundary.year.toString(), 0, 12);
+                }
+
+                ctx.restore();
+            });
+
+            // Wichtige Datumsmarkierungen
+            const keyMarkers = [
+                { days: 0, label: formatDateShort(chartData.windowStart365), color: '#888', description: t('startLabel') + ' ' + t('daysAgo') },
+                { days: 365 - 180, label: '180T', color: '#ffc107', description: formatDateShort(chartData.windowStart180) },
+                { days: 365 - 90, label: '90T', color: '#e63946', description: 'Limit' },
+                { days: 365, label: formatDateShort(chartData.referenceDate), color: '#00d4ff', description: t('legendRefDate') }
+            ];
+
+            keyMarkers.forEach(marker => {
+                const deg = dayToDeg(marker.days);
+                const markerRadius = outerRadius + 20;
+
+                ctx.beginPath();
+                ctx.arc(
+                    centerX + Math.cos(degToRad(deg)) * (outerRadius + 8),
+                    centerY + Math.sin(degToRad(deg)) * (outerRadius + 8),
+                    4, 0, 2 * Math.PI
+                );
+                ctx.fillStyle = marker.color;
+                ctx.fill();
+
+                const labelX = centerX + Math.cos(degToRad(deg)) * (markerRadius + 15);
+                const labelY = centerY + Math.sin(degToRad(deg)) * (markerRadius + 15);
+
+                ctx.save();
+                ctx.translate(labelX, labelY);
+
+                ctx.fillStyle = marker.color;
+                ctx.font = 'bold 10px Segoe UI';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(marker.label, 0, -6);
+
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.font = '8px Segoe UI';
+                ctx.fillText(marker.description, 0, 6);
+
+                ctx.restore();
+            });
+
+            // Richtungspfeil
+            const arrowRadius = outerRadius + 12;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, arrowRadius, degToRad(30), degToRad(60));
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            const arrowTipDeg = 60;
+            const arrowTipX = centerX + Math.cos(degToRad(arrowTipDeg)) * arrowRadius;
+            const arrowTipY = centerY + Math.sin(degToRad(arrowTipDeg)) * arrowRadius;
+
+            ctx.beginPath();
+            ctx.moveTo(arrowTipX, arrowTipY);
+            ctx.lineTo(
+                arrowTipX + Math.cos(degToRad(arrowTipDeg - 150)) * 10,
+                arrowTipY + Math.sin(degToRad(arrowTipDeg - 150)) * 10
+            );
+            ctx.moveTo(arrowTipX, arrowTipY);
+            ctx.lineTo(
+                arrowTipX + Math.cos(degToRad(arrowTipDeg + 120)) * 10,
+                arrowTipY + Math.sin(degToRad(arrowTipDeg + 120)) * 10
+            );
+            ctx.strokeStyle = 'rgba(0, 212, 255, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Bezugsdatum-Markierung
+            ctx.beginPath();
+            ctx.arc(
+                centerX + Math.cos(degToRad(0)) * (outerRadius + 8),
+                centerY + Math.sin(degToRad(0)) * (outerRadius + 8),
+                8, 0, 2 * Math.PI
+            );
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Zentrum
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerRadius - 5, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fill();
+
+            const usedDays = chartData.usedDays180 || 0;
+            const remaining = chartData.remainingDays || 90;
+
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 42px Segoe UI';
+            ctx.fillText(remaining, centerX, centerY - 10);
+
+            ctx.font = '13px Segoe UI';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(t('chartCenter1'), centerX, centerY + 15);
+
+            ctx.font = 'bold 12px Segoe UI';
+            ctx.fillStyle = usedDays > 80 ? '#e63946' : usedDays > 60 ? '#ffc107' : '#2ec4b6';
+            ctx.fillText(`${usedDays} / 90 ${t('chartCenter2')}`, centerX, centerY + 35);
+
+            updateChartLegend();
+        }
+
+        function updateChartLegend() {
+            const usedDays180 = chartData.usedDays180 || 0;
+            const usedDays365 = chartData.usedDays365 || 0;
+            const usedDaysOutside = chartData.usedDaysOutside180 || 0;
+            const remaining = chartData.remainingDays || 90;
+
+            document.getElementById('legendStays365').textContent = `${usedDays365} ${t('days')}`;
+            document.getElementById('legendWindow180').textContent =
+                `${formatDateDisplay(chartData.windowStart180)} - ${formatDateDisplay(chartData.referenceDate)}`;
+            document.getElementById('legendLimit90').textContent = t('maxAllowed');
+            document.getElementById('legendStays180').textContent = `${usedDays180} ${t('daysInWindow')}`;
+            document.getElementById('legendStaysOutside').textContent = `${usedDaysOutside} ${t('days')}`;
+            document.getElementById('legendReferenceDate').textContent = formatDateDisplay(chartData.referenceDate);
+
+            document.getElementById('chartUsedPercent').textContent = `${Math.round((usedDays180 / 90) * 100)}%`;
+            document.getElementById('chartRemainingDays').textContent = remaining;
+            document.getElementById('chartWindowUsed').textContent = `${Math.round((usedDays180 / 180) * 100)}%`;
+            document.getElementById('chartYearUsed').textContent = `${Math.round((usedDays365 / 365) * 100)}%`;
+        }
+
+        // =====================================================
+        // FENSTER-GRÖßENÄNDERUNG
+        // =====================================================
+
+        window.addEventListener('resize', () => {
+            if (chartData.referenceDate) {
+                renderCircularChart();
+            }
+        });
+    </script>
+</body>
+
+</html>
